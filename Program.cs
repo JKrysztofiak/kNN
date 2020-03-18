@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Security.Cryptography;
 
 namespace KNN
@@ -45,9 +46,7 @@ namespace KNN
             //then
             //Sort the ordered collection from smallest to largest
             var sortedDistances = distances.OrderBy(x => x.Key).ToList();
-            
-            
-            
+
             //Pick the first k entries
             var kNearestNeighbours = new List<KeyValuePair<double, string>>();
             
@@ -56,36 +55,38 @@ namespace KNN
             for (int i = 0; i < k; i++)
             {
                 kNearestNeighbours.Add(sortedDistances[i]);
-                try
-                {
-                    classes.Add(sortedDistances[i].Value,0);
-                }catch (ArgumentException e)
-                {
-                    
-                }
-                
-            }
-
-            for (int i = 0; i < classes.Count; i++)
-            {
-                string key = classes.Keys.ToList()[i];
-                List<double> values = (from y in kNearestNeighbours where y.Value == key select y.Key).ToList();
-                classes[key] = values.Count;
-            }
-
-            foreach (var group in classes)
-            {
-                Console.WriteLine($"{group.Key}: {group.Value}");
             }
             
-            var myList = classes.ToList();
+            
+            List<string> results = new List<string>();
+            List<int> resultsCount = new List<int>();
+            foreach (var neighbour in kNearestNeighbours)
+            {
+                // Console.WriteLine($"{neighbour.Value} [{neighbour.Key}]");
+                if (results.Contains(neighbour.Value))
+                {
+                    resultsCount[results.IndexOf(neighbour.Value)] += 1;
+                }
+                else
+                {
+                    results.Add(neighbour.Value);
+                    resultsCount.Add(0);
+                }
+            }
 
-            myList.Sort((x,y) => y.Value.CompareTo(x.Value));
-
-            return myList[0].Key;
+            int max = 0;
+            foreach (var count in resultsCount)
+            {
+                if (count > max)
+                {
+                    max = count;
+                }
+            }
+            
+            return results[resultsCount.IndexOf(max)];
         } 
 
-        static double KnnPrecision(string test, IEnumerable<string> trainingSet, int k) 
+        static string KnnTesting(string test, IEnumerable<string> trainingSet, int k) 
         {
             string res = test.Split(";")[test.Split(";").Length - 1];
            
@@ -119,14 +120,35 @@ namespace KNN
             
             
             //Get labels of selected k entries
+            List<string> results = new List<string>();
+            List<int> resultsCount = new List<int>();
             foreach (var neighbour in kNearestNeighbours)
             {
-                Console.WriteLine($"{neighbour.Value} [{neighbour.Key}]");
+                // Console.WriteLine($"{neighbour.Value} [{neighbour.Key}]");
+                if (results.Contains(neighbour.Value))
+                {
+                    resultsCount[results.IndexOf(neighbour.Value)] += 1;
+                }
+                else
+                {
+                    results.Add(neighbour.Value);
+                    resultsCount.Add(0);
+                }
             }
+
+            int max = 0;
+            foreach (var count in resultsCount)
+            {
+                if (count > max)
+                {
+                    max = count;
+                }
+            }
+            
+            Console.WriteLine($"Your result: {results[resultsCount.IndexOf(max)]}");
             Console.WriteLine($"Result: {res}");
 
-            //Calculate the accuracy
-            return kNearestNeighbours.Count(pair => pair.Value.Equals(res))/(double)k;
+            return results[resultsCount.IndexOf(max)];
         } 
         
         
@@ -144,22 +166,29 @@ namespace KNN
 
             //Initialize k to a chosen number
             //TODO: change to args
-            int k = 3;
-
-            double accurate = 0;
-            int numOfTest = 0;
-
-            foreach (var row in testingSet)
-            {
-                numOfTest += 1;
-                string res = row.Split(";")[row.Split(";").Length - 1];
-                if (KnnPrecision(row, trainingSet, k)>0.5)
-                {
-                    accurate += 1;
-                }
-            }
+            int k = 8;
             
-            Console.WriteLine($"For k={k} accuracy is: {accurate/(double)numOfTest}");
+            
+            
+            // for (k = 1; k < 47; k++)
+            // {
+                double accurate = 0;
+                int numOfTest = 0;
+            
+                foreach (var row in testingSet)
+                {
+                    string res = row.Split(";")[row.Split(";").Length - 1];
+                    numOfTest += 1;
+                    if (KnnTesting(row, trainingSet, k).Equals(res))
+                    {
+                        accurate += 1;
+                    }
+                }
+            
+                Console.WriteLine($"For k={k} accuracy is: {accurate/numOfTest}"); 
+            // }
+
+            
 
             while (true)    
             {
@@ -174,13 +203,11 @@ namespace KNN
                     Console.WriteLine("4. petal width in cm");
                     var pw = Double.Parse(Console.ReadLine());
             
-                    Console.WriteLine($"Your result {KnnClassification($"{sl};{sw};{pl};{pw}", trainingSet, k)}");
-                    
-            
+                    Console.WriteLine($"Your result: {KnnClassification($"{sl};{sw};{pl};{pw}", trainingSet, k)}");
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.StackTrace);
+                    Console.WriteLine("Podano błędne dane!");
                 }
             }
 
