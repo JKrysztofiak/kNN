@@ -27,63 +27,9 @@ namespace KNN
             return Math.Sqrt(sum);
         }
         
-        static string KnnClassification(string test, IEnumerable<string> trainingSet, int k) 
+        static string KnnClassification(string test, IEnumerable<string> trainingSet, int k)
         {
-            List<KeyValuePair<double,string>> distances = new List<KeyValuePair<double, string>>();
-            //for each row in data
-            foreach (var row in trainingSet)
-            {
-                string group = row.Split(";")[row.Split(";").Length - 1];
-                
-                //calculate the distance
-                var distance = Euclidean_Distance(test, row);
-                
-                //Add distance and the index to an ordered collection
-                distances.Add(new KeyValuePair<double, string>(distance, group));
-
-            }
-            
-            //then
-            //Sort the ordered collection from smallest to largest
-            var sortedDistances = distances.OrderBy(x => x.Key).ToList();
-
-            //Pick the first k entries
-            var kNearestNeighbours = new List<KeyValuePair<double, string>>();
-            
-            Dictionary<string,int> classes = new Dictionary<string, int>();
-            
-            for (int i = 0; i < k; i++)
-            {
-                kNearestNeighbours.Add(sortedDistances[i]);
-            }
-            
-            
-            List<string> results = new List<string>();
-            List<int> resultsCount = new List<int>();
-            foreach (var neighbour in kNearestNeighbours)
-            {
-                // Console.WriteLine($"{neighbour.Value} [{neighbour.Key}]");
-                if (results.Contains(neighbour.Value))
-                {
-                    resultsCount[results.IndexOf(neighbour.Value)] += 1;
-                }
-                else
-                {
-                    results.Add(neighbour.Value);
-                    resultsCount.Add(0);
-                }
-            }
-
-            int max = 0;
-            foreach (var count in resultsCount)
-            {
-                if (count > max)
-                {
-                    max = count;
-                }
-            }
-            
-            return results[resultsCount.IndexOf(max)];
+            return KnnTesting(test + "; ", trainingSet, k);
         } 
 
         static string KnnTesting(string test, IEnumerable<string> trainingSet, int k) 
@@ -145,8 +91,8 @@ namespace KNN
                 }
             }
             
-            Console.WriteLine($"Your result: {results[resultsCount.IndexOf(max)]}");
-            Console.WriteLine($"Result: {res}");
+            // Console.WriteLine($"Your result: {results[resultsCount.IndexOf(max)]}");
+            // Console.WriteLine($"Result: {res}");
 
             return results[resultsCount.IndexOf(max)];
         } 
@@ -155,7 +101,6 @@ namespace KNN
         static void Main(string[] args)
         {
             //Load the data
-            //TODO: change to args
             // var trainingSetPath = @"train-set.csv";
             // var testingSetPath = @"test-set.csv";
             var trainingSetPath = @"train.csv";
@@ -165,7 +110,6 @@ namespace KNN
             var testingSet = File.ReadLines(testingSetPath).ToList();
 
             //Initialize k to a chosen number
-            //TODO: change to args
             int k = 8;
             
             
