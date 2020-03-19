@@ -64,7 +64,7 @@ namespace KNN
                 kNearestNeighbours.Add(sortedDistances[i]);
             }
             
-            
+
             //Get labels of selected k entries
             List<string> results = new List<string>();
             List<int> resultsCount = new List<int>();
@@ -78,7 +78,7 @@ namespace KNN
                 else
                 {
                     results.Add(neighbour.Value);
-                    resultsCount.Add(0);
+                    resultsCount.Add(1);
                 }
             }
 
@@ -90,9 +90,14 @@ namespace KNN
                     max = count;
                 }
             }
+
+            for (int i = 0; i < results.Count; i++)
+            {
+                Console.WriteLine($"{results[i]}: {resultsCount[i]}");
+            }
             
-            // Console.WriteLine($"Your result: {results[resultsCount.IndexOf(max)]}");
-            // Console.WriteLine($"Result: {res}");
+            Console.WriteLine($"Your result: {results[resultsCount.IndexOf(max)]}");
+            Console.WriteLine($"Result: {res}");
 
             return results[resultsCount.IndexOf(max)];
         } 
@@ -101,8 +106,6 @@ namespace KNN
         static void Main(string[] args)
         {
             //Load the data
-            // var trainingSetPath = @"train-set.csv";
-            // var testingSetPath = @"test-set.csv";
             var trainingSetPath = @"train.csv";
             var testingSetPath = @"test.csv";
             
@@ -110,11 +113,11 @@ namespace KNN
             var testingSet = File.ReadLines(testingSetPath).ToList();
 
             //Initialize k to a chosen number
-            int k = 8;
+            int k = 5;
             
             
             
-            // for (k = 1; k < 47; k++)
+            // for (k = 1; k < 100; k++)
             // {
                 double accurate = 0;
                 int numOfTest = 0;
