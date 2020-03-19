@@ -137,21 +137,28 @@ namespace KNN
                 Console.WriteLine($"For k={k} accuracy is: {accurate/numOfTest}"); 
             // }
 
-            
 
-            while (true)    
+
+            var running = true;
+            while (running)    
             {
                 try
                 {
-                    Console.WriteLine("1. sepal length in cm");
-                    var sl = Double.Parse(Console.ReadLine());
-                    Console.WriteLine("2. sepal width in cm");
+                    Console.WriteLine("1. sepal length in cm (or exit)");
+                    var inpt = Console.ReadLine();
+                    if (inpt.ToLower().Equals("exit"))
+                    {
+                        running = false;
+                        break;
+                    }
+                    var sl = Double.Parse(inpt);
+                    Console.WriteLine("2. sepal width in cm ");
                     var sw = Double.Parse(Console.ReadLine());
-                    Console.WriteLine("3. petal length in cm");
+                    Console.WriteLine("3. petal length in cm ");
                     var pl = Double.Parse(Console.ReadLine());
-                    Console.WriteLine("4. petal width in cm");
+                    Console.WriteLine("4. petal width in cm ");
                     var pw = Double.Parse(Console.ReadLine());
-            
+                    
                     Console.WriteLine($"Your result: {KnnClassification($"{sl};{sw};{pl};{pw}", trainingSet, k)}");
                 }
                 catch (Exception e)
