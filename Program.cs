@@ -91,13 +91,15 @@ namespace KNN
                 }
             }
 
+            /*
             for (int i = 0; i < results.Count; i++)
             {
                 Console.WriteLine($"{results[i]}: {resultsCount[i]}");
             }
+            */
             
-            Console.WriteLine($"Your result: {results[resultsCount.IndexOf(max)]}");
-            Console.WriteLine($"Result: {res}");
+            // Console.WriteLine($"Your result: {results[resultsCount.IndexOf(max)]}");
+            // Console.WriteLine($"Result: {res}");
 
             return results[resultsCount.IndexOf(max)];
         } 
